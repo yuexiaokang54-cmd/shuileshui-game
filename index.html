@@ -159,11 +159,17 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0A0A0F;color:#F0EDE
   </div>
   <!-- 测试工具 -->
   <div style="width:100%;max-width:400px;margin-top:20px;padding-top:14px;border-top:1px solid rgba(255,255,255,.05);">
+    <div style="font-size:11px;color:#C9A84C;margin-bottom:6px;">📤 积分提取</div>
+    <div class="row" style="margin-bottom:6px;">
+      <button class="bt2" onclick="extractQualified()" style="padding:4px 10px;font-size:10px;border-color:rgba(201,168,76,.3);">✅ 提取100分以上</button>
+      <button class="bt2" onclick="copyQualified()" style="padding:4px 10px;font-size:10px;">📋 复制已提取</button>
+    </div>
+    <div style="font-size:11px;color:#8A8678;margin-bottom:6px;" id="extract_info"></div>
     <div style="font-size:11px;color:#C9A84C;margin-bottom:6px;">🛠 测试工具</div>
     <div class="row">
       <button class="bt2" onclick="resetDaily()" style="padding:4px 10px;font-size:10px;">重置今日次数</button>
       <button class="bt2" onclick="addTestPoints()" style="padding:4px 10px;font-size:10px;">+50测试积分</button>
-      <button class="bt2" onclick="copyRecords()" style="padding:4px 10px;font-size:10px;">📋 复制记录</button>
+      <button class="bt2" onclick="copyRecords()" style="padding:4px 10px;font-size:10px;">📋 全部记录</button>
     </div>
   </div>
 </div>
@@ -419,6 +425,44 @@ function copyRecords(){
   document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
   alert('✅ 已复制！贴到微信即可查看');
 }
+
+// ===== 积分提取 =====
+function extractQualified(){
+  var r=JSON.parse(localStorage.getItem('ss_records')||'[]');
+  var qualified=r.filter(function(v){return v.points>=NEED;});
+  var unprocessed=r.filter(function(v){return v.points<NEED;});
+  if(qualified.length===0){alert('没有100分以上的记录');return;}
+  // 把已提取的存到单独列表
+  var extracted=JSON.parse(localStorage.getItem('ss_extracted')||'[]');
+  qualified.forEach(function(v){extracted.push(v);});
+  localStorage.setItem('ss_extracted',JSON.stringify(extracted));
+  // 未处理的存回去
+  localStorage.setItem('ss_records',JSON.stringify(unprocessed));
+  updateExtractInfo();
+  alert('✅ 已提取 '+qualified.length+' 条100分以上记录，共 '+qualified.reduce(function(s,v){return s+v.points;},0)+' 积分');
+}
+
+function copyQualified(){
+  var e=JSON.parse(localStorage.getItem('ss_extracted')||'[]');
+  if(e.length===0){alert('暂无已提取的记录');return;}
+  var t='【水了个水 · 已提取满100分记录】\n\n';
+  e.forEach(function(v){
+    var d=new Date(v.date);
+    t+=v.phone+' | '+v.points+'分 | '+(d.getMonth()+1)+'/'+d.getDate()+' '+d.getHours()+':'+String(d.getMinutes()).padStart(2,'0')+'\n';
+  });
+  t+='\n总计 '+e.length+' 人，'+e.reduce(function(s,v){return s+v.points;},0)+' 积分';
+  var ta=document.createElement('textarea');ta.value=t;
+  ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+  alert('✅ 已复制！贴到微信即可查看');
+}
+
+function updateExtractInfo(){
+  var e=JSON.parse(localStorage.getItem('ss_extracted')||'[]');
+  var r=JSON.parse(localStorage.getItem('ss_records')||'[]');
+  $('extract_info').textContent='已提取 '+e.length+' 条 · 待处理 '+r.length+' 条（含 '+(r.filter(function(v){return v.points>=NEED;}).length)+' 条100分以上）';
+}
+updateExtractInfo();
 
 // ===== 防滚动 =====
 document.getElementById('g').addEventListener('touchmove',function(e){e.preventDefault();},{passive:false});
