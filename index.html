@@ -223,7 +223,12 @@ updateHome();
 function startGame(){
   var d=JSON.parse(localStorage.getItem('ss_day')||'{}');
   var today=new Date().toISOString().slice(0,10);
-  if(d.date===today&&d.played){alert('今日已玩过！明天再来');return;}
+  if(d.date===today&&d.played){
+    doShare('💧 水了个水 — 今天已玩过！分享给好友一起玩，继续赚积分！',function(){
+      startLevel(0);
+    });
+    return;
+  }
   localStorage.setItem('ss_day',JSON.stringify({date:today,played:true}));
   startLevel(0);
 }
@@ -354,13 +359,32 @@ function submitPhone(){
 }
 
 // ===== 分享 =====
-function shareResult(){
-  var ta=document.createElement('textarea');
-  ta.value='🏆 水了个水 — 我打通了5关！共'+tot+'积分，可换互惠猫桶装水！\n'+window.location.href;
-  ta.style.position='fixed';ta.style.opacity='0';
-  document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
-  alert('✅ 链接已复制！发到微信好友就能玩');
+function doShare(msg,callback){
+  var url=window.location.href;
+  var txt=(msg||'💧 水了个水 — 邀请你一起玩！')+'\n'+url;
+  // 复制链接
+  try{
+    var ta=document.createElement('textarea');ta.value=txt;
+    ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+  }catch(e){}
+  // 显示分享引导
+  var overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.8);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;';
+  overlay.innerHTML='<div style="background:#12121A;border:1px solid rgba(201,168,76,.2);border-radius:24px;padding:32px 28px;max-width:320px;width:100%;text-align:center;">'
+    +'<div style="font-size:48px;margin-bottom:10px;">📤</div>'
+    +'<div style="font-size:18px;font-weight:700;margin-bottom:8px;color:#F0EDE5;">分享给好友</div>'
+    +'<div style="font-size:13px;color:#8A8678;margin-bottom:16px;line-height:1.8;">点击右上角 <strong style="color:#C9A84C;font-size:18px;">···</strong><br>选择「发送给朋友」</div>'
+    +'<button id="share_done_btn" style="width:100%;padding:14px;border:none;border-radius:24px;background:linear-gradient(135deg,#A8892F,#C9A84C,#E8D48B);color:#0A0A0F;font-size:16px;font-weight:700;cursor:pointer;">✅ 已分享，继续</button>'
+    +'</div>';
+  document.getElementById('g').appendChild(overlay);
+  document.getElementById('share_done_btn').onclick=function(){
+    overlay.remove();
+    if(callback)callback();
+  };
 }
+
+function shareResult(){doShare('🏆 水了个水 — 我打通了5关！共'+tot+'积分，可换互惠猫桶装水！');}
 
 // ===== 隐私政策 =====
 function showPrivacy(){show('p_privacy');$('hud').style.display='none';}
