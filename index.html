@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>水了个水 - 互惠猫</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{width:100%;height:100%;overflow:hidden;background:#0A0A0F;color:#F0EDE5;font-family:-apple-system,"PingFang SC",sans-serif;user-select:none;}
+#g{position:relative;width:100%;height:100%;max-width:500px;margin:0 auto;background:linear-gradient(180deg,#0A0A0F,#0D1420,#0A1628);}
+.pages{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;padding:30px;z-index:10;background:linear-gradient(180deg,#0A0A0F,#0D1420 50%,#0A1628);}
+.pages.on{display:flex;}
+.t{font-size:40px;font-weight:800;letter-spacing:4px;background:linear-gradient(135deg,#E8D48B,#C9A84C,#A8892F);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;}
+.st{font-size:12px;color:#8A8678;letter-spacing:6px;margin-bottom:20px;}
+.bt{display:inline-block;padding:15px 50px;border:none;border-radius:28px;background:linear-gradient(135deg,#A8892F,#C9A84C,#E8D48B);color:#0A0A0F;font-size:18px;font-weight:700;letter-spacing:3px;cursor:pointer;box-shadow:0 4px 20px rgba(201,168,76,.3);}
+.bt:active{transform:scale(.95);}
+.bt2{padding:10px 24px;border:1px solid rgba(255,255,255,.15);border-radius:20px;background:rgba(255,255,255,.06);color:#F0EDE5;font-size:14px;cursor:pointer;letter-spacing:1px;}
+.bt2:active{transform:scale(.95);}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.box{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.18);border-radius:16px;padding:18px 36px;text-align:center;}
+.bign{font-size:50px;font-weight:800;color:#C9A84C;line-height:1;}
+.bign span{font-size:18px;color:#8A8678;font-weight:400;}
+#hud{position:absolute;top:0;left:0;right:0;z-index:5;padding:10px 14px;display:none;justify-content:space-between;background:linear-gradient(180deg,rgba(10,10,15,.85),transparent);pointer-events:none;}
+.hl{font-size:9px;color:#8A8678;letter-spacing:1px;}
+.hn{font-size:34px;font-weight:800;line-height:1;letter-spacing:1px;}
+.hc{text-align:center;}
+.hlvl{font-size:12px;color:#C9A84C;background:rgba(201,168,76,.1);padding:3px 12px;border-radius:10px;border:1px solid rgba(201,168,76,.12);}
+.hr{text-align:right;}
+.ht{font-size:34px;font-weight:800;line-height:1;letter-spacing:1px;}
+.ht.warn{color:#E85A4A;}
+.bot{position:absolute;z-index:3;cursor:pointer;touch-action:manipulation;}
+.bot svg{display:block;filter:drop-shadow(0 3px 8px rgba(0,0,0,.4));}
+.rip{position:absolute;z-index:4;pointer-events:none;border-radius:50%;animation:rip .5s ease-out forwards;}
+@keyframes rip{0%{width:0;height:0;opacity:1}100%{width:160px;height:160px;opacity:0}}
+.fl{position:absolute;inset:0;z-index:2;pointer-events:none;transition:background .1s;}
+.fl.on{background:rgba(232,90,74,.12);}
+.ph{position:absolute;inset:0;z-index:999;display:none;background:rgba(0,0,0,.75);}
+.phone-in{display:flex;gap:6px;width:100%;max-width:300px;}
+.phone-in input{flex:1;height:42px;border-radius:21px;border:1px solid rgba(201,168,76,.25);background:rgba(255,255,255,.06);color:#F0EDE5;font-size:16px;padding:0 14px;outline:none;text-align:center;letter-spacing:2px;}
+.f2{font-size:12px;color:#8A8678;text-align:center;margin-top:10px;line-height:1.7;}
+.f2 span{color:#C9A84C;}
+@media(max-height:600px){
+  .t{font-size:30px;}.hn,.ht{font-size:26px;}.bign{font-size:38px;}
+  .pages{padding:20px;}.bt{padding:12px 36px;font-size:16px;}
+}
+</style>
+</head>
+<body>
+<div id="g">
+
+<!-- HUD -->
+<div id="hud">
+  <div><div class="hl">已送达</div><div class="hn" id="sc">0</div><div style="font-size:11px;color:#C9A84C;">目标 <span id="tg">0</span> 桶</div></div>
+  <div class="hc"><div class="hlvl" id="lvl_name">第 1 关</div></div>
+  <div class="hr"><div class="hl">秒</div><div class="ht" id="tmr">30</div></div>
+</div>
+<div class="fl" id="flash"></div>
+<div id="area" style="position:absolute;inset:0;z-index:3;"></div>
+
+<!-- ===== 首页 ===== -->
+<div class="pages on" id="p1">
+  <div style="font-size:60px;margin-bottom:10px;">💧</div>
+  <div class="t">水了个水</div>
+  <div class="st">— 互惠猫 · 临沧 —</div>
+  <div style="font-size:12px;color:#C9A84C;background:rgba(201,168,76,.1);padding:4px 14px;border-radius:8px;margin-bottom:16px;">🎯 每日 1 次免费</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;width:100%;max-width:300px;">
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px;text-align:center;font-size:11px;color:#8A8678;line-height:1.5;">💧 水弹出来<br>点一下就送</div>
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px;text-align:center;font-size:11px;color:#8A8678;line-height:1.5;">🌟 金瓶+3分<br>完美×1.5倍</div>
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px;text-align:center;font-size:11px;color:#8A8678;line-height:1.5;">🏆 通关5关<br>赢积分</div>
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px;text-align:center;font-size:11px;color:#8A8678;line-height:1.5;">📱 输手机号<br>客服充值积分</div>
+  </div>
+  <button class="bt" onclick="startGame()">开始送水</button>
+  <div class="f2" style="margin-top:12px;">100积分 = 1桶 互惠猫山泉水<br>积分永久有效 · 每月最多兑2桶</div>
+</div>
+
+<!-- ===== 通关（每关）===== -->
+<div class="pages" id="p_lc">
+  <div style="font-size:50px;margin-bottom:8px;">🎉</div>
+  <div style="font-size:22px;font-weight:700;margin-bottom:4px;">闯关成功！</div>
+  <div style="font-size:13px;color:#8A8678;margin-bottom:6px;">奖励积分</div>
+  <div class="box" style="padding:16px 40px;">
+    <div class="bign" id="lc_pts">0 <span>分</span></div>
+  </div>
+  <div style="font-size:13px;color:#8A8678;margin:8px 0 4px;" id="lc_detail"></div>
+  <div style="font-size:13px;color:#8A8678;margin-bottom:12px;">进度 <span id="lc_prog" style="color:#C9A84C;font-weight:600;">1/5</span></div>
+  <div class="row">
+    <button class="bt" id="btn_nxt" onclick="goNextLevel()">下一关 →</button>
+  </div>
+</div>
+
+<!-- ===== 失败 ===== -->
+<div class="pages" id="p_fail">
+  <div style="font-size:50px;margin-bottom:8px;">💦</div>
+  <div style="font-size:22px;font-weight:700;margin-bottom:4px;" id="fail_t">漏接太多</div>
+  <div style="font-size:14px;color:#8A8678;margin-bottom:6px;" id="fail_sub">再试一次！</div>
+  <div style="font-size:24px;color:#C9A84C;font-weight:800;margin-bottom:16px;" id="fail_near"></div>
+  <button class="bt" onclick="retryLevel()" style="padding:12px 40px;font-size:16px;">重新挑战</button>
+</div>
+
+<!-- ===== 全部通关 ===== -->
+<div class="pages" id="p_ac">
+  <div style="font-size:60px;margin-bottom:10px;">🏆</div>
+  <div style="font-size:24px;font-weight:700;color:#C9A84C;">全部通关！</div>
+  <div style="font-size:13px;color:#8A8678;margin-bottom:6px;">五关完成</div>
+  <div class="box" style="margin:8px 0;">
+    <div class="hl" style="font-size:11px;">本局总积分</div>
+    <div class="bign" id="ac_pts">0</div>
+  </div>
+  <div class="f2">100积分 = 1桶 互惠猫山泉水<br>积分永久有效</div>
+  <div class="phone-in" style="margin:12px 0;">
+    <input type="tel" inputmode="numeric" id="phone_inp" placeholder="输入手机号" maxlength="11">
+    <button class="bt2" onclick="submitPhone()" style="padding:10px 16px;">提交</button>
+  </div>
+  <div id="phone_msg" style="font-size:11px;color:#4CAF50;text-align:center;"></div>
+  <div class="row" style="margin-top:4px;">
+    <button class="bt2" onclick="shareResult()">🏆 秀一下</button>
+    <button class="bt2" onclick="goHome()">再来一遍</button>
+  </div>
+</div>
+
+<!-- ===== 提交确认 ===== -->
+<div class="pages" id="p_ex">
+  <div style="font-size:50px;margin-bottom:10px;">✅</div>
+  <div style="font-size:20px;font-weight:700;margin-bottom:4px;">提交成功</div>
+  <div class="f2" style="margin:6px 0 16px;">客服将在24小时内充值积分</div>
+  <button class="bt2" onclick="goHome()">返回首页</button>
+</div>
+
+</div>
+
+<script>
+// ===== 关卡配置 =====
+const LV=[{n:'新手送水',t:5,ti:28,mm:3,sp:1200,li:2500,pt:3},
+          {n:'小试身手',t:8,ti:24,mm:3,sp:1000,li:2100,pt:4},
+          {n:'渐入佳境',t:12,ti:22,mm:3,sp:850,li:1800,pt:5},
+          {n:'送水高手',t:16,ti:20,mm:2,sp:700,li:1500,pt:6},
+          {n:'潮水猫大师',t:20,ti:18,mm:2,sp:550,li:1200,pt:7}];
+const NEED=100;
+
+// ===== 状态 =====
+var lv=0,state='idle',sc=0,ms=0,tl=30,gd=0,tot=parseInt(localStorage.getItem('ss_pts')||'0',10);
+var tmr=null,spawn=null,bots=[],bid=0;
+
+// ===== 工具 =====
+function $(id){return document.getElementById(id);}
+function show(id){document.querySelectorAll('.pages').forEach(function(p){p.classList.remove('on');});$(id).classList.add('on');}
+function hd(){return document.getElementById('hud');}
+
+// ===== 游戏开始 =====
+function startGame(){
+  var d=JSON.parse(localStorage.getItem('ss_day')||'{}');
+  var today=new Date().toISOString().slice(0,10);
+  if(d.date===today&&d.played){
+    alert('今日已玩过！明天再来');
+    return;
+  }
+  localStorage.setItem('ss_day',JSON.stringify({date:today,played:true}));
+  startLevel(0);
+}
+
+function startLevel(idx){
+  if(idx>=LV.length){allClear();return;}
+  lv=idx;var l=LV[lv];
+  state='playing';sc=0;ms=0;gd=0;tl=l.ti;bots=[];bid=0;
+  $('area').innerHTML='';
+  document.querySelectorAll('.pages').forEach(function(p){p.classList.remove('on');});
+  hd().style.display='flex';
+  $('lvl_name').textContent='第 '+(lv+1)+' 关 · '+l.n;
+  $('sc').textContent='0';$('tg').textContent=l.t;$('tmr').textContent=l.ti;
+  clearInterval(tmr);clearTimeout(spawn);
+  tmr=setInterval(tick,1000);
+  setTimeout(function(){if(state==='playing')addBottle();},300);
+}
+
+function tick(){
+  tl--;$('tmr').textContent=tl;
+  if(tl<=5){$('tmr').classList.add('warn');}else{$('tmr').classList.remove('warn');}
+  if(tl<=0){
+    if(sc>=LV[lv].t)levelDone();
+    else levelFail();
+  }
+}
+
+// ===== 水瓶 =====
+function addBottle(){
+  if(state!=='playing')return;
+  var l=LV[lv];var s=size();var gw=g.clientWidth,gh=g.clientHeight;
+  var x=8+Math.random()*(gw-s.w-16);var y=96+Math.random()*(gh-120-s.h);
+  var gold=Math.random()<0.08;var id=bid++;var life=blife();
+  var el=document.createElement('div');
+  el.className='bot';
+  var bw=s.w,bh=s.h;
+  el.style.cssText='left:'+x+'px;top:'+y+'px;width:'+bw+'px;height:'+bh+'px;opacity:0;transform:scale(.3)';
+  el.innerHTML='<svg viewBox="0 0 '+bw+' '+bh+'"><rect x="'+bw*.19+'" y="'+bh*.28+'" width="'+bw*.62+'" height="'+bh*.62+'" rx="'+bw*.1+'" fill="'+(gold?'#E8D48B':'#D4E8F0')+'" stroke="'+(gold?'#A8892F':'#8AB0C0')+'" stroke-width=".8"/><rect x="'+bw*.36+'" y="'+bh*.16+'" width="'+bw*.28+'" height="'+bh*.13+'" rx="3" fill="'+(gold?'#E8D48B':'#D4E8F0')+'" stroke="'+(gold?'#A8892F':'#8AB0C0')+'" stroke-width=".6"/><rect x="'+bw*.31+'" y="'+bh*.06+'" width="'+bw*.38+'" height="'+bh*.12+'" rx="3" fill="#C9A84C" stroke="#A8892F" stroke-width=".8"/><rect x="'+bw*.17+'" y="'+bh*.42+'" width="'+bw*.66+'" height="'+bh*.3+'" rx="4" fill="'+(gold?'rgba(201,168,76,.5)':'rgba(42,125,225,.45)')+'"/><text x="'+bw/2+'" y="'+bh*.6+'" text-anchor="middle" fill="#C9A84C" font-size="'+bh*.08+'" font-weight="700">'+(gold?'金':'水')+'</text></svg>';
+  $('area').appendChild(el);
+  requestAnimationFrame(function(){el.style.transition='opacity .12s,transform .2s';el.style.opacity='1';el.style.transform='scale(1)';});
+  var obj={id:id,el:el,gold:gold,alive:true};
+  el.ontouchstart=function(e){e.preventDefault();deliver(obj);};
+  el.onclick=function(e){e.preventDefault();deliver(obj);};
+  obj.timer=setTimeout(function(){if(obj.alive)miss(obj);},life);
+  bots.push(obj);
+  schedule();
+}
+
+function schedule(){
+  if(state!=='playing')return;
+  clearTimeout(spawn);
+  var p=Math.min((LV[lv].ti-tl)/LV[lv].ti,1);
+  var interval=LV[lv].sp-(LV[lv].sp-LV[lv].sp*.55)*p;
+  spawn=setTimeout(addBottle,interval);
+}
+
+function size(){var b=Math.min(g.clientWidth,g.clientHeight);return b<380?{w:52,h:72}:b<500?{w:60,h:84}:{w:70,h:96};}
+function blife(){var l=LV[lv];var p=Math.min((l.ti-tl)/l.ti,1);return l.li-(l.li-l.li*.45)*p;}
+
+// ===== 送水 =====
+function deliver(obj){
+  if(!obj.alive||state!=='playing')return;
+  obj.alive=false;clearTimeout(obj.timer);
+  sc++;if(obj.gold)gd++;
+  $('sc').textContent=sc;
+  // 特效
+  var er=obj.el.getBoundingClientRect(),gr=g.getBoundingClientRect();
+  var cx=er.left-gr.left+er.width/2,cy=er.top-gr.top+er.height/2;
+  var rip=document.createElement('div');rip.className='rip';
+  rip.style.cssText='left:'+cx+'px;top:'+cy+'px;background:radial-gradient(circle,rgba(42,125,225,.35),transparent 70%)';
+  $('area').appendChild(rip);setTimeout(function(){rip.remove();},500);
+  obj.el.style.transition='transform .15s,opacity .1s';obj.el.style.transform='scale(1.5)';obj.el.style.opacity='0';
+  setTimeout(function(){if(obj.el.parentNode)obj.el.parentNode.removeChild(obj.el);},200);
+  bots=bots.filter(function(b){return b!==obj;});
+  // 通关检查
+  if(sc>=LV[lv].t){levelDone();return;}
+  schedule();
+}
+
+function miss(obj){
+  if(!obj.alive)return;
+  obj.alive=false;ms++;
+  $('flash').classList.add('on');setTimeout(function(){$('flash').classList.remove('on');},150);
+  obj.el.style.transition='transform .12s,opacity .12s';obj.el.style.transform='translateY(8px)';obj.el.style.opacity='0';
+  setTimeout(function(){if(obj.el.parentNode)obj.el.parentNode.removeChild(obj.el);},200);
+  bots=bots.filter(function(b){return b!==obj;});
+  if(ms>=LV[lv].mm){levelFail();return;}
+  schedule();
+}
+
+// ===== 关卡完成 =====
+function levelDone(){
+  state='complete';clearInterval(tmr);clearTimeout(spawn);
+  cleanup();
+  var l=LV[lv];var pts=l.pt;if(ms===0)pts=Math.round(pts*1.5);
+  if(gd>0)pts+=gd*2;
+  tot+=pts;localStorage.setItem('ss_pts',String(tot));
+  // 记录日志
+  var log=JSON.parse(localStorage.getItem('ss_log')||'[]');
+  log.push({date:new Date().toISOString(),level:l.n,pts:pts,perfect:ms===0,golden:gd});
+  localStorage.setItem('ss_log',JSON.stringify(log));
+  if(lv===LV.length-1){show('p_ac');$('ac_pts').textContent=tot;hd().style.display='none';return;}
+  $('lc_pts').innerHTML=pts+' <span>分</span>';
+  var d='';
+  if(ms===0&&gd>0)d='完美×1.5 · 金瓶×'+gd;
+  else if(ms===0)d='✨ 完美通关 ×1.5';
+  else if(gd>0)d='金瓶×'+gd;
+  $('lc_detail').textContent=d;
+  $('lc_prog').textContent=(lv+1)+'/5';
+  show('p_lc');
+}
+
+function goNextLevel(){startLevel(lv+1);}
+
+function levelFail(){
+  state='failed';clearInterval(tmr);clearTimeout(spawn);cleanup();
+  var l=LV[lv];var n=l.t-sc;
+  if(ms>=l.mm){$('fail_t').textContent='💦 漏接太多';}else{$('fail_t').textContent='⏰ 时间不够';}
+  $('fail_sub').textContent='目标 '+l.t+' 桶，再试一次！';
+  $('fail_near').textContent=n>0&&n<=5?'就差 '+n+' 桶！':n>0?'还差 '+n+' 桶':'';
+  show('p_fail');
+}
+
+function retryLevel(){startLevel(lv);}
+
+function allClear(){
+  show('p_ac');$('ac_pts').textContent=tot;hd().style.display='none';
+  cleanup();
+}
+
+function cleanup(){bots.forEach(function(b){clearTimeout(b.timer);if(b.el&&b.el.parentNode)b.el.parentNode.removeChild(b.el);});bots=[];}
+
+function goHome(){show('p1');hd().style.display='none';}
+
+// ===== 手机号提交 =====
+function submitPhone(){
+  var phone=$('phone_inp').value.trim();
+  var msg=$('phone_msg');
+  if(!/^1\d{10}$/.test(phone)){msg.textContent='请输入正确的手机号';msg.style.color='#E85A4A';return;}
+  var records=JSON.parse(localStorage.getItem('ss_records')||'[]');
+  records.push({phone:phone,points:tot,date:new Date().toISOString()});
+  localStorage.setItem('ss_records',JSON.stringify(records));
+  show('p_ex');
+  $('phone_inp').value='';msg.textContent='';
+}
+
+// ===== 分享 =====
+function shareResult(){
+  var ta=document.createElement('textarea');
+  ta.value='🏆 水了个水 — 我打通了5关！共'+tot+'积分，可换互惠猫桶装水！\n'+window.location.href;
+  ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.select();document.execCommand('copy');
+  document.body.removeChild(ta);
+  alert('✅ 链接已复制！发到微信好友就能玩');
+}
+
+// ===== 防滚动 =====
+document.getElementById('g').addEventListener('touchmove',function(e){e.preventDefault();},{passive:false});
+</script>
+</body>
+</html>
