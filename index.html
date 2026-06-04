@@ -9,8 +9,7 @@
 html,body{width:100%;height:100%;overflow:hidden;background:#0A0A0F;color:#F0EDE5;font-family:-apple-system,"PingFang SC",sans-serif;user-select:none;}
 #g{position:relative;width:100%;height:100%;max-width:500px;margin:0 auto;background:linear-gradient(180deg,#0A0A0F,#0D1420,#0A1628);}
 .pages{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;padding:30px;z-index:10;background:linear-gradient(180deg,#0A0A0F,#0D1420 50%,#0A1628);}
-.pages.on{display:flex;}
-.p-scroll{padding-top:40px;justify-content:flex-start;overflow-y:auto;}
+.pages.on{display:flex;}.p-scroll{padding-top:40px;justify-content:flex-start;overflow-y:auto;}
 .t{font-size:40px;font-weight:800;letter-spacing:4px;background:linear-gradient(135deg,#E8D48B,#C9A84C,#A8892F);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px;}
 .st{font-size:12px;color:#8A8678;letter-spacing:6px;margin-bottom:20px;}
 .bt{display:inline-block;padding:15px 50px;border:none;border-radius:28px;background:linear-gradient(135deg,#A8892F,#C9A84C,#E8D48B);color:#0A0A0F;font-size:18px;font-weight:700;letter-spacing:3px;cursor:pointer;box-shadow:0 4px 20px rgba(201,168,76,.3);}
@@ -21,7 +20,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0A0A0F;color:#F0EDE
 .box{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.18);border-radius:16px;padding:18px 36px;text-align:center;}
 .bign{font-size:50px;font-weight:800;color:#C9A84C;line-height:1;}
 .bign span{font-size:18px;color:#8A8678;font-weight:400;}
-#hud{position:absolute;top:0;left:0;right:0;z-index:5;padding:10px 14px;display:none;justify-content:space-between;background:linear-gradient(180deg,rgba(10,10,15,.85),transparent);pointer-events:none;}
+#hud{position:absolute;top:0;left:0;right:0;z-index:5;padding:10px 14px 6px;display:none;justify-content:space-between;background:linear-gradient(180deg,rgba(10,10,15,.85),transparent);pointer-events:none;}
 .hl{font-size:9px;color:#8A8678;letter-spacing:1px;}
 .hn{font-size:34px;font-weight:800;line-height:1;letter-spacing:1px;}
 .hc{text-align:center;}
@@ -29,6 +28,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0A0A0F;color:#F0EDE
 .hr{text-align:right;}
 .ht{font-size:34px;font-weight:800;line-height:1;letter-spacing:1px;}
 .ht.warn{color:#E85A4A;}
+#combo{position:absolute;top:54px;left:50%;transform:translateX(-50%);z-index:6;font-size:14px;font-weight:700;color:#C9A84C;letter-spacing:1px;opacity:0;transition:opacity .2s;pointer-events:none;text-shadow:0 0 20px rgba(201,168,76,.3);}
 .bot{position:absolute;z-index:3;cursor:pointer;touch-action:manipulation;}
 .bot svg{display:block;filter:drop-shadow(0 3px 8px rgba(0,0,0,.4));}
 .rip{position:absolute;z-index:4;pointer-events:none;border-radius:50%;animation:rip .5s ease-out forwards;}
@@ -41,20 +41,38 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0A0A0F;color:#F0EDE
 .f2 span{color:#C9A84C;}
 .cb{font-size:10px;color:#8A8678;display:flex;align-items:center;justify-content:center;gap:4px;margin-top:6px;cursor:pointer;}
 .cb input{accent-color:#C9A84C;}
+.overlay{position:fixed;inset:0;z-index:999;display:none;background:rgba(0,0,0,.8);flex-direction:column;align-items:center;justify-content:center;padding:30px;}
 @media(max-height:600px){.t{font-size:30px;}.hn,.ht{font-size:26px;}.bign{font-size:38px;}.pages{padding:20px;}.bt{padding:12px 36px;font-size:16px;}}
 </style>
 </head>
 <body>
 <div id="g">
 
-<!-- HUD -->
+<!-- ===== HUD ===== -->
 <div id="hud">
   <div><div class="hl">已送达</div><div class="hn" id="sc">0</div><div style="font-size:11px;color:#C9A84C;">目标 <span id="tg">0</span> 桶</div></div>
   <div class="hc"><div class="hlvl" id="lvl_name">第 1 关</div></div>
   <div class="hr"><div class="hl">秒</div><div class="ht" id="tmr">30</div></div>
 </div>
+<div id="combo">🔥 连击!</div>
 <div class="fl" id="flash"></div>
 <div id="area" style="position:absolute;inset:0;z-index:3;"></div>
+
+<!-- ===== 新手引导 ===== -->
+<div class="overlay" id="tutorial">
+  <div style="background:#12121A;border:1px solid rgba(201,168,76,.25);border-radius:24px;padding:28px 24px;max-width:320px;width:100%;text-align:center;">
+    <div style="font-size:40px;margin-bottom:10px;">💧</div>
+    <div style="font-size:18px;font-weight:700;margin-bottom:8px;">玩法说明</div>
+    <div style="text-align:left;font-size:13px;color:#8A8678;line-height:2;margin-bottom:14px;padding:0 4px;">
+      🎯 <strong style="color:#C9A84C;">点击水瓶</strong>完成送水<br>
+      ⏱ 倒计时结束前送达<strong style="color:#C9A84C;">目标桶数</strong>过关<br>
+      🌟 <strong style="color:#C9A84C;">金瓶</strong>额外加分 · 0漏接<strong style="color:#C9A84C;">×1.5倍</strong><br>
+      🔥 <strong style="color:#C9A84C;">连续点击</strong>触发连击奖励<br>
+      🏆 5关攒积分 → <strong style="color:#C9A84C;">100分换1桶水</strong>
+    </div>
+    <button class="bt" onclick="closeTutorial()" style="padding:12px 40px;font-size:15px;">知道了，开始玩</button>
+  </div>
+</div>
 
 <!-- ===== 首页 ===== -->
 <div class="pages on" id="p1">
@@ -62,21 +80,18 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0A0A0F;color:#F0EDE
   <div class="t">水了个水</div>
   <div class="st">— 互惠猫 · 临沧 —</div>
   <div style="font-size:12px;color:#C9A84C;background:rgba(201,168,76,.1);padding:4px 14px;border-radius:8px;margin-bottom:14px;"><span id="daily_badge">🎯 每日 1 次免费</span></div>
-  <div style="font-size:13px;color:#8A8678;text-align:center;line-height:1.6;margin-bottom:12px;">
-    100积分 = 1桶 互惠猫山泉水<br>
-    <span id="prog_text" style="color:#C9A84C;"></span>
-  </div>
+  <div style="font-size:13px;color:#8A8678;text-align:center;line-height:1.6;margin-bottom:12px;">100积分 = 1桶 互惠猫山泉水<br><span id="prog_text" style="color:#C9A84C;"></span></div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px;width:100%;max-width:300px;">
-    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:10px;text-align:center;font-size:11px;color:#8A8678;line-height:1.4;">💧 点水瓶送水<br>30秒闯关</div>
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:10px;text-align:center;font-size:11px;color:#8A8678;line-height:1.4;">💧 点水瓶<br>快速送水</div>
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:10px;text-align:center;font-size:11px;color:#8A8678;line-height:1.4;">🔥 连击<br>触发奖励</div>
     <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:10px;text-align:center;font-size:11px;color:#8A8678;line-height:1.4;">🌟 金瓶+2分<br>完美×1.5</div>
-    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:10px;text-align:center;font-size:11px;color:#8A8678;line-height:1.4;">🏆 5关通关<br>攒积分</div>
-    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:10px;text-align:center;font-size:11px;color:#8A8678;line-height:1.4;">📱 提交手机号<br>客服充值积分</div>
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:10px;text-align:center;font-size:11px;color:#8A8678;line-height:1.4;">📱 100分→<br>提交领水</div>
   </div>
   <button class="bt" onclick="startGame()">开始送水</button>
   <div style="display:flex;justify-content:space-between;width:100%;max-width:300px;margin-top:12px;">
     <span style="font-size:10px;color:#8A8678;opacity:.5;">积分永久累积</span>
     <span style="font-size:9px;color:#8A8678;opacity:.15;cursor:pointer;" onclick="showPrivacy()">隐私</span>
-    <span style="font-size:9px;color:#8A8678;opacity:.15;" id="admin_version">v3.1</span>
+    <span style="font-size:9px;color:#8A8678;opacity:.15;" id="admin_version">v3.5</span>
   </div>
 </div>
 
@@ -157,16 +172,15 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0A0A0F;color:#F0EDE
     </div>
     <div id="admin_content" style="font-size:12px;color:#8A8678;line-height:1.8;"></div>
   </div>
-  <!-- 测试工具 -->
-  <div style="width:100%;max-width:400px;margin-top:20px;padding-top:14px;border-top:1px solid rgba(255,255,255,.05);">
+  <div style="width:100%;max-width:400px;margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.05);">
     <div style="font-size:11px;color:#C9A84C;margin-bottom:6px;">📤 积分提取</div>
     <div class="row" style="margin-bottom:6px;">
       <button class="bt2" onclick="extractQualified()" style="padding:4px 10px;font-size:10px;border-color:rgba(201,168,76,.3);">✅ 提取100分以上</button>
       <button class="bt2" onclick="copyQualified()" style="padding:4px 10px;font-size:10px;">📋 复制已提取</button>
-      <button class="bt2" onclick="clearExtracted()" style="padding:4px 10px;font-size:10px;border-color:rgba(232,90,74,.3);color:#E85A4A;">🗑 清除已提取</button>
+      <button class="bt2" onclick="clearExtracted()" style="padding:4px 10px;font-size:10px;border-color:rgba(232,90,74,.3);color:#E85A4A;">🗑 清除</button>
     </div>
-    <div style="font-size:11px;color:#8A8678;margin-bottom:6px;" id="extract_info"></div>
-    <div style="font-size:11px;color:#C9A84C;margin-bottom:6px;">🛠 测试工具</div>
+    <div style="font-size:10px;color:#8A8678;margin-bottom:6px;" id="extract_info"></div>
+    <div style="font-size:11px;color:#C9A84C;margin-bottom:6px;">🛠 测试</div>
     <div class="row">
       <button class="bt2" onclick="resetDaily()" style="padding:4px 10px;font-size:10px;">重置今日次数</button>
       <button class="bt2" onclick="addTestPoints()" style="padding:4px 10px;font-size:10px;">+50测试积分</button>
@@ -178,44 +192,41 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0A0A0F;color:#F0EDE
 </div>
 
 <script>
-// ===== 关卡配置 =====
-const LV=[{n:'新手送水',t:5,ti:28,mm:3,sp:1200,li:2500,pt:3},
-          {n:'小试身手',t:8,ti:24,mm:3,sp:1000,li:2100,pt:4},
-          {n:'渐入佳境',t:12,ti:22,mm:3,sp:850,li:1800,pt:5},
-          {n:'送水高手',t:16,ti:20,mm:2,sp:700,li:1500,pt:6},
-          {n:'潮水猫大师',t:20,ti:18,mm:2,sp:550,li:1200,pt:7}];
+// ===== 关卡 =====
+const LV=[{n:'新手送水',t:6,ti:22,mm:2,sp:1400,li:2000,pt:3},
+          {n:'小试身手',t:10,ti:20,mm:2,sp:1200,li:1700,pt:4},
+          {n:'渐入佳境',t:14,ti:18,mm:2,sp:1000,li:1500,pt:5},
+          {n:'送水高手',t:18,ti:16,mm:1,sp:850,li:1300,pt:6},
+          {n:'潮水猫大师',t:22,ti:14,mm:1,sp:700,li:1000,pt:7}];
 const NEED=100,ADMIN_PWD='Yxk2025';
 
 // ===== 音效 =====
 var AC=null;
-function snd(freq,dur,vol){
-  try{
-    if(!AC){AC=new(window.AudioContext||window.webkitAudioContext)();}
-    if(AC.state==='suspended')AC.resume();
-    var o=AC.createOscillator(),g=AC.createGain();
-    o.type='sine';o.frequency.value=freq;
-    g.gain.setValueAtTime(vol||.1,AC.currentTime);
-    g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+dur);
-    o.connect(g);g.connect(AC.destination);
-    o.start();o.stop(AC.currentTime+dur);
-  }catch(e){}
-}
+function snd(f,d,v){try{if(!AC){AC=new(window.AudioContext||window.webkitAudioContext)();}if(AC.state==='suspended')AC.resume();var o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(v||.1,AC.currentTime);g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+d);o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d);}catch(e){}}
 
 // ===== 状态 =====
-var lv=0,state='idle',sc=0,ms=0,tl=30,gd=0,tot=parseInt(localStorage.getItem('ss_pts')||'0',10);
+var lv=0,state='idle',sc=0,ms=0,tl=30,gd=0,cb=0,cbt=null,
+    tot=parseInt(localStorage.getItem('ss_pts')||'0',10);
 var tmr=null,spawn=null,bots=[],bid=0;
-
 function $(id){return document.getElementById(id);}
 function show(id){document.querySelectorAll('.pages').forEach(function(p){p.classList.remove('on');});$(id).classList.add('on');}
 
-// ===== 首页每日状态更新 =====
+// ===== 新手引导 =====
+if(!localStorage.getItem('ss_tutorial')){
+  $('tutorial').style.display='flex';
+}
+function closeTutorial(){
+  $('tutorial').style.display='none';
+  localStorage.setItem('ss_tutorial','1');
+}
+
+// ===== 首页 =====
 function updateHome(){
   var d=JSON.parse(localStorage.getItem('ss_day')||'{}');
   var today=new Date().toISOString().slice(0,10);
   var played=d.date===today&&d.played;
-  $('daily_badge').textContent=played?'🎯 今日已玩 · 明日再来':'🎯 每日 1 次免费';
-  var pct=Math.min(tot/NEED*100,100);
-  $('prog_text').textContent=tot>=NEED?'✅ 已积累 '+tot+'分 · 可以换水了！':'已积累 '+tot+'/'+NEED+' 分 · 还差 '+(NEED-tot)+' 分';
+  $('daily_badge').textContent=played?'🎯 今日已玩':'🎯 每日 1 次免费';
+  $('prog_text').textContent=tot>=NEED?'✅ 已积累 '+tot+'分 · 可提交领水':'已积累 '+tot+'/'+NEED+' 分 · 还差 '+(NEED-tot)+' 分';
 }
 updateHome();
 
@@ -224,9 +235,7 @@ function startGame(){
   var d=JSON.parse(localStorage.getItem('ss_day')||'{}');
   var today=new Date().toISOString().slice(0,10);
   if(d.date===today&&d.played){
-    doShare('💧 水了个水 — 今天已玩过！分享给好友一起玩，继续赚积分！',function(){
-      startLevel(0);
-    });
+    doShare('💧 水了个水 — 今天已玩过！分享给好友继续赚积分！',function(){startLevel(0);});
     return;
   }
   localStorage.setItem('ss_day',JSON.stringify({date:today,played:true}));
@@ -235,10 +244,10 @@ function startGame(){
 function startLevel(idx){
   if(idx>=LV.length){allClear();return;}
   lv=idx;var l=LV[lv];
-  state='playing';sc=0;ms=0;gd=0;tl=l.ti;bots=[];bid=0;
+  state='playing';sc=0;ms=0;gd=0;cb=0;tl=l.ti;bots=[];bid=0;
   $('area').innerHTML='';
   document.querySelectorAll('.pages').forEach(function(p){p.classList.remove('on');});
-  $('hud').style.display='flex';
+  $('hud').style.display='flex';$('combo').style.display='none';
   $('lvl_name').textContent='第 '+(lv+1)+' 关 · '+l.n;
   $('sc').textContent='0';$('tg').textContent=l.t;$('tmr').textContent=l.ti;
   clearInterval(tmr);clearTimeout(spawn);
@@ -247,10 +256,20 @@ function startLevel(idx){
 }
 function tick(){
   tl--;$('tmr').textContent=tl;
-  if(tl<=5){$('tmr').classList.add('warn');}else{$('tmr').classList.remove('warn');}
-  if(tl<=5)snd(1000,.04,.05);
+  if(tl<=5){$('tmr').classList.add('warn');snd(1000,.04,.05);}else{$('tmr').classList.remove('warn');}
   if(tl<=0){if(sc>=LV[lv].t)levelDone();else levelFail();}
 }
+
+// ===== 连击系统 =====
+function comboHit(){
+  cb++;clearTimeout(cbt);
+  if(cb>=3){
+    $('combo').textContent='🔥 '+cb+'连击!';
+    $('combo').style.display='block';$('combo').style.opacity='1';
+  }
+  cbt=setTimeout(function(){cb=0;$('combo').style.opacity='0';},2000);
+}
+function comboBonus(){return cb>=10?3:cb>=5?2:cb>=3?1:0;}
 
 // ===== 水瓶 =====
 function addBottle(){
@@ -284,8 +303,11 @@ function deliver(obj){
   if(!obj.alive||state!=='playing')return;
   obj.alive=false;clearTimeout(obj.timer);
   sc++;if(obj.gold)gd++;
+  var bonus=comboBonus();sc+=bonus; // 连击奖励加到总送达
   $('sc').textContent=sc;
-  snd(obj.gold?1200:700,obj.gold?.12:.08,obj.gold?.15:.1);
+  if(obj.gold)snd(1200,.12,.15);else snd(700,.08,.1);
+  comboHit();
+  // 特效
   var er=obj.el.getBoundingClientRect(),gr=g.getBoundingClientRect();
   var cx=er.left-gr.left+er.width/2,cy=er.top-gr.top+er.height/2;
   var rip=document.createElement('div');rip.className='rip';
@@ -305,6 +327,7 @@ function miss(obj){
   obj.el.style.transition='transform .12s,opacity .12s';obj.el.style.transform='translateY(8px)';obj.el.style.opacity='0';
   setTimeout(function(){if(obj.el.parentNode)obj.el.parentNode.removeChild(obj.el);},200);
   bots=bots.filter(function(b){return b!==obj;});
+  cb=0;$('combo').style.opacity='0';
   if(ms>=LV[lv].mm){levelFail();return;}
   schedule();
 }
@@ -319,7 +342,7 @@ function levelDone(){
   var log=JSON.parse(localStorage.getItem('ss_log')||'[]');
   log.push({date:new Date().toISOString(),level:l.n,pts:pts,perfect:ms===0,golden:gd});
   localStorage.setItem('ss_log',JSON.stringify(log));
-  if(lv===LV.length-1){show('p_ac');$('ac_pts').textContent=tot;$('ac_summary').textContent='累计积分 '+tot+'/'+NEED;hd().style.display='none';return;}
+  if(lv===LV.length-1){show('p_ac');$('ac_pts').textContent=tot;$('ac_summary').textContent='累计 '+tot+'/'+NEED+' 分';$('hud').style.display='none';return;}
   $('lc_pts').innerHTML=pts+' <span>分</span>';
   var d='';
   if(ms===0&&gd>0)d='完美×1.5 · 金瓶×'+gd;
@@ -334,166 +357,128 @@ function levelFail(){
   state='failed';clearInterval(tmr);clearTimeout(spawn);cleanup();
   snd(392,.2,.1);setTimeout(function(){snd(330,.2,.08);},150);setTimeout(function(){snd(262,.2,.06);},300);
   var l=LV[lv];var n=l.t-sc;
-  if(ms>=l.mm){$('fail_t').textContent='💦 漏接太多';}else{$('fail_t').textContent='⏰ 时间不够';}
+  $('fail_t').textContent=ms>=l.mm?'💦 漏接太多':'⏰ 时间不够';
   $('fail_sub').textContent='目标 '+l.t+' 桶，再试一次！';
   $('fail_near').textContent=n>0&&n<=5?'就差 '+n+' 桶！':n>0?'还差 '+n+' 桶':'';
   show('p_fail');
 }
 function retryLevel(){startLevel(lv);}
-function allClear(){show('p_ac');$('ac_pts').textContent=tot;$('ac_summary').textContent='累计积分 '+tot+'/'+NEED;hd().style.display='none';cleanup();
+function allClear(){show('p_ac');$('ac_pts').textContent=tot;$('ac_summary').textContent='累计 '+tot+'/'+NEED+' 分';$('hud').style.display='none';cleanup();
   snd(523,.3,.1);setTimeout(function(){snd(659,.3,.1);},150);setTimeout(function(){snd(784,.3,.1);},300);setTimeout(function(){snd(1047,.4,.12);},450);
 }
 function cleanup(){bots.forEach(function(b){clearTimeout(b.timer);if(b.el&&b.el.parentNode)b.el.parentNode.removeChild(b.el);});bots=[];}
-function goHome(){show('p1');$('hud').style.display='none';updateHome();}
+function goHome(){show('p1');$('hud').style.display='none';$('combo').style.display='none';updateHome();}
 
 // ===== 手机号提交 =====
 function submitPhone(){
-  var phone=$('phone_inp').value.trim();
-  var msg=$('phone_msg');
+  var phone=$('phone_inp').value.trim(),msg=$('phone_msg');
   if(!/^1\d{10}$/.test(phone)){msg.textContent='请输入正确的手机号';msg.style.color='#E85A4A';return;}
   if(!$('consent').checked){msg.textContent='请先勾选同意隐私条款';msg.style.color='#E85A4A';return;}
-  var records=JSON.parse(localStorage.getItem('ss_records')||'[]');
-  records.push({phone:phone,points:tot,date:new Date().toISOString()});
-  localStorage.setItem('ss_records',JSON.stringify(records));
+  var r=JSON.parse(localStorage.getItem('ss_records')||'[]');
+  r.push({phone:phone,points:tot,date:new Date().toISOString()});
+  localStorage.setItem('ss_records',JSON.stringify(r));
   show('p_ex');$('phone_inp').value='';msg.textContent='';
 }
 
-// ===== 分享 =====
+// ===== 分享（合规版：引导右上角···分享，非诱导分享）=====
 function doShare(msg,callback){
-  var url=window.location.href;
-  var txt=(msg||'💧 水了个水 — 邀请你一起玩！')+'\n'+url;
-  // 复制链接
-  try{
-    var ta=document.createElement('textarea');ta.value=txt;
-    ta.style.position='fixed';ta.style.opacity='0';
-    document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
-  }catch(e){}
-  // 显示分享引导
-  var overlay=document.createElement('div');
-  overlay.style.cssText='position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.8);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;';
+  var txt=(msg||'💧 水了个水 — 一起玩！')+'\n'+window.location.href;
+  try{var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);}catch(e){}
+  var overlay=document.createElement('div');overlay.className='overlay';overlay.style.display='flex';
   overlay.innerHTML='<div style="background:#12121A;border:1px solid rgba(201,168,76,.2);border-radius:24px;padding:32px 28px;max-width:320px;width:100%;text-align:center;">'
     +'<div style="font-size:48px;margin-bottom:10px;">📤</div>'
     +'<div style="font-size:18px;font-weight:700;margin-bottom:8px;color:#F0EDE5;">分享给好友</div>'
-    +'<div style="font-size:13px;color:#8A8678;margin-bottom:16px;line-height:1.8;">点击右上角 <strong style="color:#C9A84C;font-size:18px;">···</strong><br>选择「发送给朋友」</div>'
-    +'<button id="share_done_btn" style="width:100%;padding:14px;border:none;border-radius:24px;background:linear-gradient(135deg,#A8892F,#C9A84C,#E8D48B);color:#0A0A0F;font-size:16px;font-weight:700;cursor:pointer;">✅ 已分享，继续</button>'
-    +'</div>';
+    +'<div style="font-size:13px;color:#8A8678;margin-bottom:16px;line-height:1.8;position:relative;">'
+    +'点击右上角 <strong style="color:#C9A84C;font-size:22px;">···</strong><br>选择「发送给朋友」</div>'
+    +'<button id="share_done_btn" style="width:100%;padding:14px;border:none;border-radius:24px;background:linear-gradient(135deg,#A8892F,#C9A84C,#E8D48B);color:#0A0A0F;font-size:16px;font-weight:700;cursor:pointer;">✅ 已分享，继续</button></div>';
   document.getElementById('g').appendChild(overlay);
-  document.getElementById('share_done_btn').onclick=function(){
-    overlay.remove();
-    if(callback)callback();
-  };
+  document.getElementById('share_done_btn').onclick=function(){overlay.remove();if(callback)callback();};
 }
-
 function shareResult(){doShare('🏆 水了个水 — 我打通了5关！共'+tot+'积分，可换互惠猫桶装水！');}
 
-// ===== 隐私政策 =====
+// ===== 隐私 =====
 function showPrivacy(){show('p_privacy');$('hud').style.display='none';}
 
-// ===== 管理员面板 =====
-var adminClick=0,adminTimer=null;
+// ===== 管理员 =====
+var ac=0,at=null;
 document.getElementById('admin_version').onclick=function(){
-  adminClick++;clearTimeout(adminTimer);
-  adminTimer=setTimeout(function(){adminClick=0;},1000);
-  if(adminClick<5)return;
-  adminClick=0;
-  var pwd=prompt('管理员密码：');
-  if(pwd===ADMIN_PWD){show('p_admin');$('hud').style.display='none';showAdmin('records');}
+  ac++;clearTimeout(at);at=setTimeout(function(){ac=0;},1000);
+  if(ac<5)return;ac=0;
+  var p=prompt('管理员密码：');
+  if(p===ADMIN_PWD){show('p_admin');$('hud').style.display='none';showAdmin('records');}
 };
-
-function showAdmin(tab){
-  $('admin_tab_records').style.background=tab==='records'?'rgba(201,168,76,.2)':'';
-  $('admin_tab_stats').style.background=tab==='stats'?'rgba(201,168,76,.2)':'';
-  if(tab==='records')showRecords();
-  else showStats();
+function showAdmin(t){
+  $('admin_tab_records').style.background=t==='records'?'rgba(201,168,76,.2)':'';
+  $('admin_tab_stats').style.background=t==='stats'?'rgba(201,168,76,.2)':'';
+  if(t==='records')showRecords();else showStats();
 }
-
 function showRecords(){
   var r=JSON.parse(localStorage.getItem('ss_records')||'[]');
   var h='<div style="font-size:12px;color:#C9A84C;margin-bottom:6px;">📱 提交记录</div>';
-  if(r.length===0){h+='<div style="padding:12px;color:#8A8678;">暂无</div>';}
+  if(r.length===0)h+='<div style="padding:12px;color:#8A8678;">暂无</div>';
   else{[...r].reverse().forEach(function(v){
     var d=new Date(v.date);
     h+='<div style="display:flex;justify-content:space-between;padding:4px 8px;background:rgba(255,255,255,.03);border-radius:6px;margin-bottom:4px;"><span>'+v.phone+'</span><span>'+v.points+'分 '+(d.getMonth()+1)+'/'+d.getDate()+'</span></div>';
   });}
   $('admin_content').innerHTML=h;
 }
-
 function showStats(){
   var ops=JSON.parse(localStorage.getItem('ss_log')||'[]');
-  var wins=ops.filter(function(o){return o.perfect===true||o.perfect===false;}).length; // count all
-  var winsCount=ops.length;
   var h='<div style="background:rgba(201,168,76,.06);border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:12px;">';
   h+='<div style="display:flex;justify-content:space-between;margin:2px 0;"><span>累积积分</span><strong style="color:#C9A84C;">'+tot+'</strong></div>';
-  h+='<div style="display:flex;justify-content:space-between;margin:2px 0;"><span>游戏次数</span><strong style="color:#F0EDE5;">'+winsCount+'</strong></div>';
-  h+='<div style="display:flex;justify-content:space-between;margin:2px 0;"><span>提交手机号</span><strong style="color:#4CAF50;">'+(JSON.parse(localStorage.getItem('ss_records')||'[]').length)+'</strong></div>';
-  h+='</div>';
-  // 最近10次
-  var recent=ops.slice(-10).reverse();
-  if(recent.length>0){
-    h+='<div style="font-size:11px;color:#C9A84C;margin-bottom:4px;">🕐 最近记录</div>';
-    recent.forEach(function(o){
-      h+='<div style="font-size:11px;color:#8A8678;padding:2px 0;">'+o.level+' · '+o.pts+'分'+(o.perfect?' · ✨完美':'')+(o.golden?' · 🥇'+o.golden:'')+'</div>';
-    });
-  }
+  h+='<div style="display:flex;justify-content:space-between;margin:2px 0;"><span>游戏次数</span><strong style="color:#F0EDE5;">'+ops.length+'</strong></div>';
+  h+='<div style="display:flex;justify-content:space-between;margin:2px 0;"><span>提交手机号</span><strong style="color:#4CAF50;">'+(JSON.parse(localStorage.getItem('ss_records')||'[]').length)+'</strong></div></div>';
+  var recent=ops.slice(-8).reverse();
+  if(recent.length>0){h+='<div style="font-size:11px;color:#C9A84C;margin-bottom:4px;">🕐 最近记录</div>';
+    recent.forEach(function(o){h+='<div style="font-size:11px;color:#8A8678;padding:2px 0;">'+o.level+' · '+o.pts+'分'+(o.perfect?' · ✨完美':'')+(o.golden?' · 🥇'+o.golden:'')+'</div>';});}
   $('admin_content').innerHTML=h;
-}
-
-// ===== 测试工具 =====
-function resetDaily(){localStorage.removeItem('ss_day');updateHome();alert('✅ 今日次数已重置');}
-function addTestPoints(){tot+=50;localStorage.setItem('ss_pts',String(tot));updateHome();alert('✅ +50积分，当前共'+tot+'分');}
-function copyRecords(){
-  var r=JSON.parse(localStorage.getItem('ss_records')||'[]');
-  var t='【水了个水提交记录】\n总积分：'+tot+' | 游戏次数：'+JSON.parse(localStorage.getItem('ss_log')||'[]').length+'\n\n手机号提交记录：\n';
-  r.forEach(function(v){var d=new Date(v.date);t+=v.phone+' | '+v.points+'分 | '+(d.getMonth()+1)+'/'+d.getDate()+' '+d.getHours()+':'+String(d.getMinutes()).padStart(2,'0')+'\n';});
-  var ta=document.createElement('textarea');ta.value=t;
-  ta.style.position='fixed';ta.style.opacity='0';
-  document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
-  alert('✅ 已复制！贴到微信即可查看');
 }
 
 // ===== 积分提取 =====
 function extractQualified(){
   var r=JSON.parse(localStorage.getItem('ss_records')||'[]');
-  var qualified=r.filter(function(v){return v.points>=NEED;});
-  var unprocessed=r.filter(function(v){return v.points<NEED;});
-  if(qualified.length===0){alert('没有100分以上的记录');return;}
-  // 把已提取的存到单独列表
-  var extracted=JSON.parse(localStorage.getItem('ss_extracted')||'[]');
-  qualified.forEach(function(v){extracted.push(v);});
-  localStorage.setItem('ss_extracted',JSON.stringify(extracted));
-  // 未处理的存回去
-  localStorage.setItem('ss_records',JSON.stringify(unprocessed));
+  var q=r.filter(function(v){return v.points>=NEED;});
+  var u=r.filter(function(v){return v.points<NEED;});
+  if(q.length===0){alert('没有100分以上的记录');return;}
+  var e=JSON.parse(localStorage.getItem('ss_extracted')||'[]');
+  q.forEach(function(v){e.push(v);});
+  localStorage.setItem('ss_extracted',JSON.stringify(e));
+  localStorage.setItem('ss_records',JSON.stringify(u));
   updateExtractInfo();
-  alert('✅ 已提取 '+qualified.length+' 条100分以上记录，共 '+qualified.reduce(function(s,v){return s+v.points;},0)+' 积分');
+  alert('✅ 已提取 '+q.length+' 条，共 '+q.reduce(function(s,v){return s+v.points;},0)+' 积分');
 }
-
 function copyQualified(){
   var e=JSON.parse(localStorage.getItem('ss_extracted')||'[]');
   if(e.length===0){alert('暂无已提取的记录');return;}
   var t='【水了个水 · 已提取满100分记录】\n\n';
-  e.forEach(function(v){
-    var d=new Date(v.date);
-    t+=v.phone+' | '+v.points+'分 | '+(d.getMonth()+1)+'/'+d.getDate()+' '+d.getHours()+':'+String(d.getMinutes()).padStart(2,'0')+'\n';
-  });
+  e.forEach(function(v){var d=new Date(v.date);t+=v.phone+' | '+v.points+'分 | '+(d.getMonth()+1)+'/'+d.getDate()+' '+d.getHours()+':'+String(d.getMinutes()).padStart(2,'0')+'\n';});
   t+='\n总计 '+e.length+' 人，'+e.reduce(function(s,v){return s+v.points;},0)+' 积分';
-  var ta=document.createElement('textarea');ta.value=t;
-  ta.style.position='fixed';ta.style.opacity='0';
+  var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';
   document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
   alert('✅ 已复制！贴到微信即可查看');
 }
-
 function clearExtracted(){
-  if(!confirm('确定清除已提取的 '+JSON.parse(localStorage.getItem('ss_extracted')||'[]').length+' 条记录？'))return;
-  localStorage.setItem('ss_extracted','[]');
-  updateExtractInfo();
-  alert('✅ 已清除');
+  if(!confirm('确定清除已提取的 '+JSON.parse(localStorage.getItem('ss_extracted')||'[]').length+' 条？'))return;
+  localStorage.setItem('ss_extracted','[]');updateExtractInfo();alert('✅ 已清除');
 }
 function updateExtractInfo(){
   var e=JSON.parse(localStorage.getItem('ss_extracted')||'[]');
   var r=JSON.parse(localStorage.getItem('ss_records')||'[]');
-  $('extract_info').textContent='已提取 '+e.length+' 条 · 待处理 '+r.length+' 条（含 '+(r.filter(function(v){return v.points>=NEED;}).length)+' 条100分以上）';
+  $('extract_info').textContent='已提取 '+e.length+' 条 · 待处理 '+r.length+' 条（含 '+(r.filter(function(v){return v.points>=NEED;}).length)+' 条可提取）';
 }
 updateExtractInfo();
+
+// ===== 测试 =====
+function resetDaily(){localStorage.removeItem('ss_day');updateHome();alert('✅ 已重置');}
+function addTestPoints(){tot+=50;localStorage.setItem('ss_pts',String(tot));updateHome();alert('✅ +50分，共'+tot+'分');}
+function copyRecords(){
+  var r=JSON.parse(localStorage.getItem('ss_records')||'[]');
+  var t='【水了个水提交记录】\n总积分：'+tot+' | 次数：'+JSON.parse(localStorage.getItem('ss_log')||'[]').length+'\n\n手机号：\n';
+  r.forEach(function(v){var d=new Date(v.date);t+=v.phone+' | '+v.points+'分 | '+(d.getMonth()+1)+'/'+d.getDate()+' '+d.getHours()+':'+String(d.getMinutes()).padStart(2,'0')+'\n';});
+  var ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+  alert('✅ 已复制');
+}
 
 // ===== 防滚动 =====
 document.getElementById('g').addEventListener('touchmove',function(e){e.preventDefault();},{passive:false});
